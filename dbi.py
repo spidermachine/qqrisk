@@ -2,7 +2,6 @@
 #  -*- coding: UTF-8 -*-
 import sys
 import MySQLdb
-import csv
 import os
 import datetime
 
@@ -63,8 +62,117 @@ def insertTableStr(user, passwd, db, table, strList):
     conn.close()
 
 
-def getconn(user, db, passwd=""):
-    conn = MySQLdb.connect(host="127.0.0.1",
+def insertTableCodes(user, passwd, db, valList, table='codes'):
+    try:
+        conn = getconn(user, db, passwd)
+        conn.set_character_set('utf8')
+    except Exception as e:
+        print ("Error %d: %s" % (e.args[0], e.args[1]))
+        sys.exit(1)
+
+    cursor = conn.cursor()
+    # cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    # cursor.execute('SET character_set_connection=utf8;')
+    for item in valList:
+        numfields = 2
+        query = buildInsertCmd(table, numfields)
+        vs = list()
+        vs.append(rec_date)
+        vs.append(item)
+        try:
+            cursor.execute(query, vs)
+        except Exception as e:
+            print(e)
+    # cursor.close()
+    conn.commit()
+    conn.close()
+
+def insertTableAlpha(user, passwd, db, valList, table='qqdeltasnapt'):
+    try:
+        conn = getconn(user, db, passwd)
+        conn.set_character_set('utf8')
+    except Exception as e:
+        print ("Error %d: %s" % (e.args[0], e.args[1]))
+        sys.exit(1)
+
+    cursor = conn.cursor()
+    # cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    # cursor.execute('SET character_set_connection=utf8;')
+    for item in valList:
+        numfields = 6
+        query = buildInsertCmd(table, numfields)
+        vs = list()
+        vs.append(rec_date)
+        vs.append(rec_time)
+        for itm in item:
+            vs.append(itm)
+        try:
+            cursor.execute(query, vs)
+        except Exception as e:
+            print(e)
+    # cursor.close()
+    conn.commit()
+    conn.close()
+
+
+def selectCodes(user, passwd, db):
+    try:
+        conn = getconn(user, db, passwd)
+        conn.set_character_set('utf8')
+    except Exception as e:
+        print ("Error %d: %s" % (e.args[0], e.args[1]))
+        sys.exit(1)
+
+    cursor = conn.cursor()
+    # cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    # cursor.execute('SET character_set_connection=utf8;')
+    try:
+        cursor.execute("select code from codes where current_date = '{}'".format(rec_date), [])
+
+    except Exception as e:
+        print(e)
+
+
+    data = cursor.fetchall()
+    conn.commit()
+    conn.close()
+
+    return [dx[0] for dx in data]
+
+
+
+def insertTableEtfSnapt(user, passwd, db, valList, table='etfsnapt'):
+    try:
+        conn = getconn(user, db, passwd)
+        conn.set_character_set('utf8')
+    except Exception as e:
+        print ("Error %d: %s" % (e.args[0], e.args[1]))
+        sys.exit(1)
+
+    cursor = conn.cursor()
+    # cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    # cursor.execute('SET character_set_connection=utf8;')
+    numfields = 3
+    query = buildInsertCmd(table, numfields)
+    vs = list()
+    vs.append(rec_date)
+    vs.append(rec_time)
+    vs.append(valList)
+    try:
+        cursor.execute(query, vs)
+    except Exception as e:
+        print(e)
+    # cursor.close()
+    conn.commit()
+    conn.close()
+
+
+def getconn(user, db, passwd="zxcASDqwe123!@#"):
+    conn = MySQLdb.connect(host="192.168.88.129",
                            user=user,
                            passwd=passwd,
                            db=db)
