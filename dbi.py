@@ -6,7 +6,7 @@ import os
 import datetime
 
 rec_date = datetime.datetime.now().strftime('%Y%m%d')
-rec_time = datetime.datetime.now().strftime('%H%M%S')
+rec_time = datetime.datetime.now().strftime('%H%M')
 
 
 def insertTable(user, passwd, db, table, csvfile):
