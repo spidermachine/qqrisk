@@ -62,7 +62,7 @@ def insertTableStr(user, passwd, db, table, strList):
     conn.close()
 
 
-def insertTableCodes(user, passwd, db, valList, table='codes'):
+def insertTableCodes(user, passwd, db, valList, expired, table='codes'):
     try:
         conn = getconn(user, db, passwd)
         conn.set_character_set('utf8')
@@ -75,11 +75,13 @@ def insertTableCodes(user, passwd, db, valList, table='codes'):
     cursor.execute('SET CHARACTER SET utf8;')
     # cursor.execute('SET character_set_connection=utf8;')
     for item in valList:
-        numfields = 2
+        numfields = 4
         query = buildInsertCmd(table, numfields)
         vs = list()
         vs.append(rec_date)
         vs.append(item)
+        vs.append(expired[0])
+        vs.append(expired[1])
         try:
             cursor.execute(query, vs)
         except Exception as e:
@@ -130,7 +132,7 @@ def selectCodes(user, passwd, db):
     cursor.execute('SET CHARACTER SET utf8;')
     # cursor.execute('SET character_set_connection=utf8;')
     try:
-        cursor.execute("select code from codes where current_date = '{}'".format(rec_date), [])
+        cursor.execute("select code from codes where rec_date = '{}'".format(rec_date), [])
 
     except Exception as e:
         print(e)
